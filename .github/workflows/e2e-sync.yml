@@ -16,5 +16,5 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Run Bash script
         run: |
-        echo "Running sync script"
-        scripts/sync.sh
+          echo "Running sync script"
+          scripts/sync.sh
