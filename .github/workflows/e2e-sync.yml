@@ -18,9 +18,6 @@ jobs:
         run: |
           echo "Running sync script"
           scripts/sync.sh
-      - uses: actions/checkout@v4
-      # this is the new step using the ms-teams-notification action
-      - name: Notify dedicated teams channel
         if: failure()
         uses: jdcargile/ms-teams-notification@v1.4
         with:
