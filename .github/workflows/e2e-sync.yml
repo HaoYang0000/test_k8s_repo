@@ -18,3 +18,15 @@ jobs:
         run: |
           echo "Running sync script"
           scripts/sync.sh
+      - uses: actions/checkout@v4
+      # this is the new step using the ms-teams-notification action
+      - name: Notify dedicated teams channel
+        if: failure()
+        uses: jdcargile/ms-teams-notification@v1.4
+        with:
+          github-token: ${{ github.token }} # this will use the runner's token.
+          ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+          notification-summary: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+          notification-color: 17a2b8
+          timezone: America/Denver
+          verbose-logging: true
