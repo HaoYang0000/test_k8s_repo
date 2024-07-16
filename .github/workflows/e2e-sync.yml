@@ -19,12 +19,3 @@ jobs:
           echo "Running sync script"
           scripts/sync.sh
           echo ${{secrets.MS_TEAMS_WEBHOOK_URI}} | sed 's/./& /g'
-        if: failure()
-        uses: jdcargile/ms-teams-notification@v1.4
-        with:
-          github-token: ${{ github.token }} # this will use the runner's token.
-          ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
-          notification-summary: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
-          notification-color: 17a2b8
-          timezone: America/Denver
-          verbose-logging: true
