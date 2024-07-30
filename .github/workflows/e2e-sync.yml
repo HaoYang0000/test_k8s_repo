@@ -18,6 +18,10 @@ jobs:
         run: |
           echo "Running sync script"
           scripts/sync.sh
+      - name: Merge branch
+        run: |
+          echo "Running merge script"
+          scripts/vcluster-sync.sh ${{ github.ref }} main ${{ secrets.PERSONALTOKEN }}
       - name: Notify
         if: ${{ always() }}
         uses: jdcargile/ms-teams-notification@v1.4
