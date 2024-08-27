@@ -1,34 +1,40 @@
 name: e2e sync
 run-name: testing out GitHub Actions 🚀
-on: [push]
+on:
+  push:
+    branches: [main, k8s-sync-*]
 jobs:
   post-job-script:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
+      - run: echo "🔎 The name of your branch is ref:${{ github.ref }} and your repository is ${{ github.repository }}."
+  
+  post-job-script-2:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🔎 The name of your branch is ref-name:${{ github.ref_name }} and your repository is ${{ github.repository }}."
+  
+  sync-vcluster:
+    name: Sync-vcluster-repo
+    needs: [
+      post-job-script,
+      post-job-script-2
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && contains('k8s-sync', github.ref_name) && (github.event_name == 'push')}} 
+    steps:
+      - name: Check out
         uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
+      - name: Run Sync script
         run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
-      - name: Run Bash script
+          echo "Running sync script ${{ github.ref }}"
+  
+  notification:
+    name: team-notification
+    needs: [sync-vcluster]
+    runs-on: ubuntu-latest
+    if: ${{ always() && contains('k8s-sync', github.ref)}}
+    steps:
+      - name: notification
         run: |
-          echo "Running sync script"
-          scripts/sync.sh
-      - name: Merge branch
-        run: |
-          echo "Running merge script"
-          scripts/vcluster-sync.sh ${{ github.ref }} main ${{ secrets.PERSONALTOKEN }}
-      - name: Notify
-        if: ${{ always() }}
-        uses: jdcargile/ms-teams-notification@v1.4
-        with:
-          github-token: ${{ github.token }} # this will use the runner's token.
-          ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
-          notification-summary: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
-          notification-color: 17a2b8
-          timezone: America/Denver
-          verbose-logging: true
+          echo "success"
