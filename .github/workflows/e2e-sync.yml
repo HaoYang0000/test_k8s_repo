@@ -22,7 +22,7 @@ jobs:
       post-job-script-2
     ]
     runs-on: ubuntu-latest
-    if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && ${{contains(github.ref, 'k8s-sync')}} && (github.event_name == 'push')}} 
+    if: ${{ always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') && contains(github.ref, 'k8s-sync') && (github.event_name == 'push')}} 
     steps:
       - name: Check out
         uses: actions/checkout@v4
