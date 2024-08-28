@@ -28,7 +28,7 @@ jobs:
       - name: Run Sync script
         run: |
           echo "Running sync script ${{ github.ref }}"
-          scripts/vcluster-sync.sh
+          scripts/sync.sh
   
   notification:
     name: team-notification
